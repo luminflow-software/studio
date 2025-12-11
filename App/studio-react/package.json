@@ -1,0 +1,37 @@
+{
+  "name": "studio-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config ./vite.config.js",
+    "build": "vite build --config ./vite.config.js",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "animation-timeline-js": "^2.3.5",
+    "jquery": "^3.7.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scenejs": "^2.0.0-beta.14",
+    "react-scenejs-timeline": "^0.3.2",
+    "scenejs": "^1.10.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@types/jquery": "^3.5.33",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.3",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.4.0",
+    "picocolors": "^1.1.1",
+    "sass-embedded": "^1.93.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.7",
+    "vite-plugin-checker": "^0.11.0"
+  }
+}

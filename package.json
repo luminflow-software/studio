@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "build": "pnpm --filter studio-react build",
+    "dev": "pnpm --filter studio-react dev",
+    "test": "jest",
+    "postinstall": "lefthook install"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "lefthook": "^2.0.9"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@parcel/watcher", "esbuild", "lefthook"]
+  }
+}

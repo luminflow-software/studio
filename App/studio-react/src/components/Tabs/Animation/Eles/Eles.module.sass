@@ -1,0 +1,17 @@
+.Eles
+	position: absolute
+	top: 20px
+	left: 0
+	right: 0
+	bottom: 19px
+	// height: inherit
+	.ele input
+		cursor: ns-resize
+		text-align: left
+		width: 110px
+	&.multiSelect
+		.ele
+			&.focused input
+				box-shadow: 0 0 0 dodgerblue inset
+			&.selected input
+				box-shadow: 6px 0 0 royalblue inset
