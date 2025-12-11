@@ -1,5 +1,5 @@
 # Luminflow Studio
-[GNU AGPL-3.0](./LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](./LICENSE)
 
 ## About
 This SVG editor and animation application is being continuously developed as [Luminflow Studio](https://github.com/luminflow-software/studio) at Luminflow.
@@ -10,13 +10,22 @@ If you wish to collaborate, then you can become a contributor through [luminflow
 ## Installation and Setup Instructions
 
 - To clone this repository to your local machine run this command in your terminal:
-	`git clone https://github.com/luminflow-software/studio.git`
+
+```sh
+git clone https://github.com/luminflow-software/studio.git
+```
 
 - Make sure you have `pnpm` installed on your system, then install dependencies inside the studio folder:
-	`pnpm install`
+
+```sh
+pnpm install
+```
 
 - After installing dependencies, you can run the dev server:
-	`pnpm dev`
+
+```sh
+pnpm dev
+```
 
 Type `q` + `Enter` to quit the server. For refresh or open browser, use `r` or `o`.
 
