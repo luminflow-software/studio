@@ -9,6 +9,7 @@ import { select } from "./Selection.js";
 
 import { tool } from "../Tab/Tool.js";
 import { layers } from "../Tab/Layer.js";
+import { doc } from "../SetUp.js";
 
 // TODO: Include canvas support for multiple element selections
 
@@ -89,6 +90,12 @@ $(document).mousemove(function(e) {
 			'top': editorPos[1] + (e.clientY - mouseStart[1])
 
 		})
+		doc.moveZoomAnchor[0] = (mouseStart[0] - e.clientX)/2;
+		doc.moveZoomAnchor[1] = (mouseStart[1] - e.clientY)/2;
+		console.log(doc.moveZoomAnchor);
+		if (doc.zoom < 1) { // reset anchor to center when panning while zoomed out (scale < 1)
+			doc.moveZoomAnchor = [0, 0];
+		}
 	}
 	if (!pressed.spaceBar) {
 		mouseStart = [e.clientX, e.clientY]; // this will update starting mouse position until the moment the user pressed the spacebar to drag

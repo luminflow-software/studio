@@ -37,12 +37,14 @@ var doc = {
 			'height': this.size[1]
 		});
 		this.showCanvas();
+		editor.style.transition = 'all 0.15s ease';
 	},
 	zoom: 1,
 	newScale: 1,
 	viewScale: [1, 1],
 	scaleFit: [1, 1],
-	scale: () => [this.viewScale[0] / this.scaleFit[0], this.viewScale[1] / this.scaleFit[1]]
+	scale: () => [this.viewScale[0] / this.scaleFit[0], this.viewScale[1] / this.scaleFit[1]],
+	moveZoomAnchor: [0, 0]
 };
 
 $('.start').click(function () {
@@ -90,8 +92,8 @@ let origin;
 const zoomSpeed = 0.05;
 const maxZoom = 20;
 
-let client = [$(window).width()/2, $(window).height()/2]; // this stores a fixed mouse position point (unless zooming out, in which case it is updated)
-let clientX, clientY; // this stores relative mouse position limited/affescted by the 'client' mouse point var and zoom level
+let zoomAnchor = [$(window).width()/2, $(window).height()/2]; // this stores a fixed mouse position point (unless zooming out, in which case it is updated)
+let clientX, clientY; // this stores relative mouse position limited/affescted by the 'zoomAnchor' mouse point var and zoom level
 
 let lastCheckedZoom = doc.zoom;
 let timeoutFn;
@@ -127,7 +129,7 @@ $(document).on('wheel', function (e) {
 				}
 				
 				if (prevZoomDir === 'in')
-					client = [clientX, clientY];
+					zoomAnchor = [clientX, clientY];
 
 				prevZoom = doc.zoom;
 				prevZoomDir = 'out';
@@ -161,7 +163,7 @@ $(document).on('wheel', function (e) {
 				prevZoomDir = 'in';
 			}
 			if (prevZoom <= 1) {
-				client = [e.clientX, e.clientY];
+				zoomAnchor = [e.clientX, e.clientY];
 			}
 			// the left and top CSS properties are always applied after transformations
 
@@ -196,13 +198,17 @@ $(document).on('wheel', function (e) {
 			if (crispZoom) {
 				offsetTop = ($(window).height() / 2 - newHeight / 2);
 				offsetLeft = ($(window).width() / 2 - newWidth / 2);
+				const zoomX = newWidth / doc.size[0];
+				const zoomY = newHeight / doc.size[1];
 				if (doc.zoom > 1) {
-					const zoomX = newWidth / doc.size[0];
-					const zoomY = newHeight / doc.size[1];
-					clientX = client[0] + (e.clientX - client[0])/zoomX;
-					clientY = client[1] + (e.clientY - client[1])/zoomY;
+					
+					clientX = doc.moveZoomAnchor[0] + zoomAnchor[0] + (e.clientX - zoomAnchor[0])/zoomX;
+					clientY = doc.moveZoomAnchor[1] + zoomAnchor[1] + (e.clientY - zoomAnchor[1])/zoomY;
 					offsetTop = $(window).height() / 2 - (clientY - doc.origPos[1])*zoomY;
 					offsetLeft = $(window).width() / 2 - (clientX - doc.origPos[0])*zoomX;
+				} else {
+					offsetTop -= doc.moveZoomAnchor[1]/2;
+					offsetLeft -= doc.moveZoomAnchor[0]/2;
 				}
 			}
 			// we need to include transform-origin, because while 50% 50% (center) is default, a (scaled) viewBox attribute will impact the origin

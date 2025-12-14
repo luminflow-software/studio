@@ -172,8 +172,6 @@ function onFileLoad(content) {
 	
 	centerCanvas();
 
-	$(editor).css('transition', 'all 0.15s ease'); // smooth zooming
-
 	// $('#editor').attr('preserveAspectRatios', 'xMidYMid meet');
 	// $('#editor').attr('overflow', 'hidden');
 
@@ -187,6 +185,8 @@ function onFileLoad(content) {
 
 	layers.update();
 
+	editor.style.transition = 'all 0.15s ease'; // smooth zooming after initial import
+	
 	doc.loaded = true;
 }
 
