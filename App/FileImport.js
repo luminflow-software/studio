@@ -74,10 +74,17 @@ function getViewBox() {
 			let heightRect = editor.getBoundingClientRect().height;
 			// taking advantage of jQuery's width() and height() functions to return pixel unit (px) dimensions while ignoring transformations, padding/border etc.
 			
-
+			const ratioX = (height / width) / (viewB.height / viewB.width);
+			const ratioY = (width / height) / (viewB.width / viewB.height);
+			
 			doc.zoom = widthRect/width; // set doc.zoom to ensure proper drawing for svg imports that are already scaled
 
-			viewScale = [width / viewB.width, height / viewB.height];
+			if (ratioX > ratioY)
+				doc.ratio = [1, ratioY];
+			else
+				doc.ratio = [ratioX, 1];
+
+			viewScale = [width / viewB.width, height / viewB.height];	
 		} catch(e) {
 			console.warn(e);
 			viewBoxDefaultSet();
