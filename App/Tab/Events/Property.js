@@ -46,6 +46,8 @@ $('.properties div').click(function () {
 
 	cache.swipe = true;
 	property.scrubberTo = $(this);
+	// capture the current value so drag deltas add to it (stroke/blur)
+	property.value = property.getBaseValue($(this).attr('aria-label'));
 	cache.btnArea = {
 		left: $(this).offset().left,
 		right: $(this).offset().left + $(this).width(),
@@ -53,7 +55,8 @@ $('.properties div').click(function () {
 		bottom: $(this).offset().top + $(this).height()
 	};
 }).mouseleave(function (e) {
-	if ($(e.target).attr('aria-label') === 'stroke' && cache.swipe && !$('.propertyScrubber').hasClass('show')) {
+	// allow scrubber activation for stroke and blur buttons
+	if (['stroke', 'blur'].includes($(e.target).attr('aria-label')) && cache.swipe && !$('.propertyScrubber').hasClass('show')) {
 		cache.start = [e.clientX, e.clientY];
 		if (e.clientX > cache.btnArea.left && e.clientX < cache.btnArea.right) {
 			cache.start = [e.clientX, e.clientY];
