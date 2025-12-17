@@ -100,7 +100,10 @@ $(window).blur(function () { // this ensures that when the user switches windows
 
 let prevTool;
 $(document).contextmenu(function (e) {
-	e.preventDefault();
+	const editor = document.querySelector('body > .svg-contain > svg#editor');
+
+	if (!editor.contains(e.target)) // This makes debugging easier for dev mode
+		e.preventDefault();
 }).keydown(function (e) {
 
 	if (!$('.color input.user').is(':focus')) { // check that the user isn't actively typing in a color in the color tab
