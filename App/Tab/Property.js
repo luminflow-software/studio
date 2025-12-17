@@ -53,10 +53,26 @@ var property = {
 							'height': scrubAmount
 						});
 						tool.strokeWidth = value;
-						break;
 					}
+					break;
+				case 'opacity':
+					valueChange = this.value + valueChange / 100; // Scale down the change for opacity (0-1 range)
+					var opacityValue = Math.max(0, Math.min(1, valueChange)); // Clamp between 0 and 1
 					
-
+					cache.ele.css('opacity', opacityValue);
+					tool.strokeOpacity = opacityValue;
+					tool.fillOpacity = opacityValue;
+					
+					var displayValue = (opacityValue * 100).toFixed(0) + '%';
+					scrubAmount = opacityValue * 190; // Scale to scrubber height
+					
+					$('.propertyScrubber').attr({
+						'data-value': displayValue
+					}).removeClass('smallText');
+					$('.scrub').css({
+						'height': scrubAmount
+					});
+					break;
 			}
 		} else {
 			$('.propertyScrubber').attr({
