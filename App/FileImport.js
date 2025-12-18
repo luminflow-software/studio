@@ -1,6 +1,7 @@
 import { cache } from "./Cache.js";
 import { doc } from "./SetUp.js";
 import { layers } from "./Tab/Layer.js";
+import { ui } from "./UI.js";
 
 $('.import').click(function () {
 	$('input#file-selector').trigger('click'); // trigger an artifical click on input to run the funciton onChooseFile(event)
@@ -160,6 +161,8 @@ function onFileLoad(content) {
 	src.remove();
 
 	$('.svg-contain > svg:first').attr('id', 'editor');
+	editor.style.transition = 'all 0s';
+
 	$('.svg-contain').addClass('show');
 
 	// the jQuery width() and height() methods auto-convert any values that are non-px into pixel values
@@ -195,6 +198,8 @@ function onFileLoad(content) {
 	editor.style.transition = 'all 0.15s ease'; // smooth zooming after initial import
 	
 	doc.loaded = true;
+	
+	ui.cursor('crosshair');
 }
 
 function onChooseFile(event) {
