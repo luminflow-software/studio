@@ -28,6 +28,9 @@ let viewScale = doc.viewScale;
 let parent;
 let offset = cache.canvas;
 let globalScale = { xDiffScale: 1, yDiffScale: 1 };
+
+let ratioOffsetX;
+let ratioOffsetY;
 //* computeScaleDiff is only needed while drawing a new element
 function computeScaleDiff(e) {
 	let xDiff = e.clientX - offset.x;
@@ -47,6 +50,8 @@ $(document).mousedown(function (e) {
 	viewBox = cache.viewBox;
 	viewScale = doc.viewScale;
 
+	ratioOffsetX = (editor.getBoundingClientRect().width - editor.getBoundingClientRect().width * doc.ratio[0]) / 2;
+	ratioOffsetY = (editor.getBoundingClientRect().height - editor.getBoundingClientRect().height * doc.ratio[1]) / 2;
 	
 	cache.canvas = { x: editor.getBoundingClientRect().x, y: editor.getBoundingClientRect().y }; // this helps ensure that after zooming the canvas coordinates are updated appropriately
 	
@@ -63,8 +68,8 @@ $(document).mousedown(function (e) {
 	if (newSVG.creating) // 
 		globalScale = computeScaleDiff(e); // compensate for the applied scaling factor(s) on parent or ancestor elements while drawing a new element
 
-	cache.start = [(e.clientX - offset.x - globalScale.xDiffScale) / viewScale[0] / doc.zoom / doc.scaleFit[0] + viewBox[0], 
-					(e.clientY - offset.y - globalScale.yDiffScale) / viewScale[1] / doc.zoom / doc.scaleFit[1] + viewBox[1]];
+	cache.start = [(e.clientX - offset.x - globalScale.xDiffScale - ratioOffsetX) / viewScale[0] / doc.zoom / doc.scaleFit[0] / doc.ratio[0] + viewBox[0], 
+					(e.clientY - offset.y - globalScale.yDiffScale - ratioOffsetY) / viewScale[1] / doc.zoom / doc.scaleFit[1] / doc.ratio[1] + viewBox[1]];
 	drag.start = [...cache.start];
 
 	// console.log('start', drag.start);
@@ -75,8 +80,8 @@ $(document).mousedown(function (e) {
 	if (svgAction.created) // when a new element was just created
 		globalScale = computeScaleDiff(e); // compensate for the applied scaling factor(s) on parent or ancestor elements
 
-	cache.stop = [(e.clientX - offset.x - globalScale.xDiffScale) / viewScale[0] / doc.zoom / doc.scaleFit[0] + viewBox[0],
-					(e.clientY - offset.y - globalScale.yDiffScale) / viewScale[1] / doc.zoom / doc.scaleFit[1] + viewBox[1]];
+	cache.stop = [(e.clientX - offset.x - globalScale.xDiffScale - ratioOffsetX) / viewScale[0] / doc.zoom / doc.scaleFit[0] / doc.ratio[0] + viewBox[0],
+					(e.clientY - offset.y - globalScale.yDiffScale - ratioOffsetY) / viewScale[1] / doc.zoom / doc.scaleFit[1] / doc.ratio[1] + viewBox[1]];
 	drag.end = [...cache.stop];
 
 	cache.cursor = [e.clientX, e.clientY];

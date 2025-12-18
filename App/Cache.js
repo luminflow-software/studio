@@ -100,6 +100,9 @@ $(window).blur(function () { // this ensures that when the user switches windows
 
 let prevTool;
 $(document).contextmenu(function (e) {
+	if (pressed.ctrlKey)
+		e.preventDefault();
+
 	const editor = document.querySelector('body > .svg-contain > svg#editor');
 
 	if (!editor.contains(e.target)) // This makes debugging easier for dev mode
