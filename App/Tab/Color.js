@@ -67,6 +67,10 @@ var colors = { // This object contains data for the color draggable component
 					if (cache.ele.css(property.colorTo)) {
 						cache.ele.css(property.colorTo, '');
 					}
+					
+					if (getComputedStyle(cache.ele[0]).getPropertyValue(property.colorTo).replace(/\s+/g, '') !== color) { // check if the color was applied to the element
+						cache.ele.css(property.colorTo, color); // if not, override any other CSS by directly setting the style attribute on the element
+					}
 				}
 				colors.push('recent', color);
 				$('[aria-label="' + property.colorTo + '"]').css('color', color);
