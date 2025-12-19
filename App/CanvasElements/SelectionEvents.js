@@ -70,6 +70,7 @@ $('#editor, .selection').mousedown(function (e) {
 	}
 })
 
+let prevZoomAnchor;
 $(document).mousemove(function(e) {
 	if (select.pointerEvents === 'none') {
 		select.pointerEvents = 'all';
@@ -90,10 +91,10 @@ $(document).mousemove(function(e) {
 			'top': editorPos[1] + (e.clientY - mouseStart[1])
 
 		})
-		doc.moveZoomAnchor[0] = (mouseStart[0] - e.clientX)/2;
-		doc.moveZoomAnchor[1] = (mouseStart[1] - e.clientY)/2;
-		console.log(doc.moveZoomAnchor);
-		if (doc.zoom < 1) { // reset anchor to center when panning while zoomed out (scale < 1)
+		doc.moveZoomAnchor[0] = prevZoomAnchor[0] + (mouseStart[0] - e.clientX)/2;
+		doc.moveZoomAnchor[1] = prevZoomAnchor[1] + (mouseStart[1] - e.clientY)/2;
+		
+		if (doc.zoom === 0) { // reset anchor to center when panning while zoomed out (scale < 1)
 			doc.moveZoomAnchor = [0, 0];
 		}
 	}
@@ -104,7 +105,7 @@ $(document).mousemove(function(e) {
 	// 	select.area();
 	// }
 }).mousedown(function(e) {
-	
+	prevZoomAnchor = [...doc.moveZoomAnchor];
 
 	windowPress = true;
 

@@ -94,11 +94,32 @@ const zoomSpeed = 0.05;
 const maxZoom = 20;
 
 let zoomAnchor = [$(window).width()/2, $(window).height()/2]; // this stores a fixed mouse position point (unless zooming out, in which case it is updated)
-let clientX, clientY; // this stores relative mouse position limited/affescted by the 'zoomAnchor' mouse point var and zoom level
+let clientX, clientY; // this stores relative mouse position limited/affected by the 'zoomAnchor' mouse point var and zoom level
 
 let lastCheckedZoom = doc.zoom;
 let timeoutFn;
 let prevZoomDir = '';
+
+const centerCanvas = () => {
+	const newWidth = doc.size[0] * doc.zoom;
+	const newHeight = doc.size[1] * doc.zoom;
+	const offsetTop = ($(window).height() / 2 - newHeight / 2);
+	const offsetLeft = ($(window).width() / 2 - newWidth / 2);
+	origin = [doc.size[0] / 2, doc.size[1] / 2]; 
+	doc.moveZoomAnchor = [0, 0];
+
+	$('#editor').css({
+		'top': offsetTop,
+		'left': offsetLeft,
+		'transform-origin': origin[0] + 'px ' + origin[1] + 'px',
+	});
+	select.area(false);
+
+	setTimeout(function() {
+		select.area(cache.ele);
+	}, 500);
+}
+
 $(document).on('wheel', function (e) {
 	if (!cache.mousedown && doc.loaded) {
 		cache.canvas = { x: editor.getBoundingClientRect().x, y: editor.getBoundingClientRect().y };
@@ -107,6 +128,9 @@ $(document).on('wheel', function (e) {
 		// let origin = [doc.size[0] / 2, doc.size[1] / 2]; // by default the origin is at the center, until we scale up the canvas
 		if (!$(e.target).is('.tools *') && !$(e.target).is('.animatable')) {
 			if (e.originalEvent.deltaY > 0) { // scrolling up - zooming out
+				if (prevZoom <= 0)
+					centerCanvas(); // reset canvas position
+
 				if (doc.zoom >= 0) {
 					if (doc.zoom <= 1) {
 						doc.zoom -= zoomSpeed;
@@ -139,14 +163,10 @@ $(document).on('wheel', function (e) {
 				// we will only change the origin when zooming in, because otherwise it becomes disorienting
 
 				if (doc.zoom < maxZoom) {
-					// doc.zoom += zoomSpeed * (maxZoom / (maxZoom-doc.zoom));
 					doc.zoom += zoomSpeed;
 					if (pressed.cmdKey) {
 						doc.zoom += zoomSpeed * 5;
 					}
-					// if (doc.zoom < 10) {
-					// 	doc.zoom += 0.5;
-					// }
 				}
 
 				// snap to scale(1) if the previous zoom was less than zero, but current is greater than 1
@@ -244,5 +264,10 @@ $(document).on('wheel', function (e) {
 	}
 	
 });
+
+$('.svg-contain').on('dblclick', function(e) {
+	if (!$(e.target).is('#editor'))
+		centerCanvas();
+})
 
 export { doc }
