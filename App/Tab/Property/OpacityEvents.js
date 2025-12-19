@@ -14,9 +14,29 @@ $('[aria-label="opacity"]').mousedown(function() {
 		top: $(this).offset().top,
 		bottom: $(this).offset().top + $(this).height()
 	};
-	// Capture the current opacity value
+	// Capture the current opacity value based on toggle state
 	if (cache.ele) {
-		var currentOpacity = cache.ele.css('opacity');
+		var currentOpacity;
+		if ($(this).hasClass('toggled')) {
+			// Toggled: get stroke-opacity or fill-opacity
+			var strokeToggled = $('[aria-label="stroke"]').hasClass('toggled');
+			var fillToggled = $('[aria-label="fill"]').hasClass('toggled');
+			
+			if (strokeToggled && !fillToggled) {
+				currentOpacity = cache.ele.attr('stroke-opacity');
+			} else if (fillToggled && !strokeToggled) {
+				currentOpacity = cache.ele.attr('fill-opacity');
+			} else if (strokeToggled && fillToggled) {
+				// Both toggled, use stroke-opacity as base
+				currentOpacity = cache.ele.attr('stroke-opacity');
+			} else {
+				// Fallback to element opacity if no stroke/fill selected
+				currentOpacity = cache.ele.css('opacity');
+			}
+		} else {
+			// Not toggled: get element opacity
+			currentOpacity = cache.ele.css('opacity');
+		}
 		property.value = currentOpacity ? parseFloat(currentOpacity) : 1;
 	}
 	console.log("opacity pressed");
