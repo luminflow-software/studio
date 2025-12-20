@@ -89,7 +89,7 @@ let prevZoom = 1;
 let dim = [0, 0];
 let prevPos = [0, 0];
 const editor = document.querySelector('#editor');
-let origin;
+let origin = [doc.size[0] / 2, doc.size[1] / 2];
 const zoomSpeed = 0.05;
 const maxZoom = 20;
 
@@ -152,9 +152,6 @@ $(document).on('wheel', function (e) {
 					}
 
 				}
-				
-				if (prevZoomDir === 'in')
-					zoomAnchor = [clientX, clientY];
 
 				prevZoom = doc.zoom;
 				prevZoomDir = 'out';
@@ -175,7 +172,7 @@ $(document).on('wheel', function (e) {
 					prevZoom = 1;
 				}
 
-				if (prevZoom < doc.zoom) { // we will only update the origin once we've zoomed out before zooming in again
+				if (prevZoomDir === 'out') { // we will only update the origin once we've zoomed out before zooming in again
 					origin = [(e.clientX - cache.canvas.x) / doc.zoom, (e.clientY - cache.canvas.y) / doc.zoom];
 					// origin = [e.clientX - doc.origPos[0], e.clientY - doc.origPos[1]];
 				}
@@ -183,10 +180,7 @@ $(document).on('wheel', function (e) {
 				prevZoom = doc.zoom;
 				prevZoomDir = 'in';
 			}
-			if (prevZoom <= 1) {
-				zoomAnchor = [e.clientX, e.clientY];
-			}
-			// the left and top CSS properties are always applied after transformations
+			zoomAnchor = [Math.min(Math.max(0, origin[0]), doc.size[0]), Math.min(Math.max(0, origin[1]), doc.size[1])]; // prevents unexpected zooming behavior, rather than setting zoomAnchor = origin directly
 
 			var offsetTop = ($(window).height() / 2 - (e.clientY - doc.origPos[1]));
 			var offsetLeft = ($(window).width() / 2 - (e.clientX - doc.origPos[0]));
@@ -196,7 +190,8 @@ $(document).on('wheel', function (e) {
 			if (doc.zoom <= 1) {
 				offsetTop = ($(window).height() / 2 - doc.size[1] / 2);
 				offsetLeft = ($(window).width() / 2 - doc.size[0] / 2);
-				origin = [doc.size[0] / 2, doc.size[1] / 2];
+				if (prevZoomDir === 'out')
+					origin = [doc.size[0] / 2, doc.size[1] / 2];
 			}
 
 			if (origin[0] < 0)
@@ -241,8 +236,7 @@ $(document).on('wheel', function (e) {
 				'top': offsetTop,
 				'left': offsetLeft,
 				// 'transform-box': 'border-box', // transform-box makes transform-origin relative to the element's own parent bounding box (rather than internal coordinate viewBox for children elements)
-				'transform-origin': origin[0] + 'px ' + origin[1] + 'px',
-				// 'transition': 'all 0s ease'
+				'transform-origin': origin[0] + 'px ' + origin[1] + 'px'
 			});
 			select.transition = true;
 			select.area(cache.ele);
@@ -266,7 +260,7 @@ $(document).on('wheel', function (e) {
 });
 
 $('.svg-contain').on('dblclick', function(e) {
-	if (!$(e.target).is('#editor'))
+	if (e.target.matches('.svg-contain'))
 		centerCanvas();
 })
 
