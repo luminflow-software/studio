@@ -47,6 +47,7 @@ var tool = {
 	fillOpacity: 1,
 	paintOrder: 'fill',
 	fill: 'dimgrey',
+	blur: 0, // last-used blur amount for new elements
 	presets: [],
 	strokeDashOffset: 0,
 	strokeDashArray: 0,

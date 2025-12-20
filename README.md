@@ -40,6 +40,7 @@ Current and maintained development of this software is available in the
 official Luminflow repository as "Luminflow Studio":
 https://github.com/luminflow-software/studio
 
+
 ## [License](./LICENSE)
 © 2025 Luminflow — https://luminflow.app
 
