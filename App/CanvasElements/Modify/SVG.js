@@ -241,6 +241,7 @@ var svg = {
 		// getBBox is relative to the element's own coordinate system before any transformations
 		const coord = [cache.ele[0].getBBox().x, cache.ele[0].getBBox().y];
 		const dimension = [cache.ele[0].getBBox().width, cache.ele[0].getBBox().height];
+		const actualSize = [cache.ele[0].getBoundingClientRect().width, cache.ele[0].getBoundingClientRect().height];
 		this.initial = { // Stores x, y, etc. values so that it can be accessed later to calculate transformations
 			x: coord[0],
 			y: coord[1],
@@ -248,6 +249,7 @@ var svg = {
 			real,
 			width: dimension[0],
 			height: dimension[1],
+			actualSize,
 			right: coord[0] + dimension[0],
 			bottom: coord[1] + dimension[1],
 			matrix: transform.matrix,

@@ -46,8 +46,8 @@ class GenericElement extends Element {
 			const origin = svg.initial.origin;
 
 
-			scaleX = (svg.initial.real.currWidth + svg.new.translateDiff[0]) / svg.initial.real.currWidth;
-			scaleY = (svg.initial.real.currHeight + svg.new.translateDiff[1]) / svg.initial.real.currHeight;
+			scaleX = Math.max(0, (svg.initial.real.currWidth + svg.new.translateDiff[0]) / svg.initial.real.currWidth);
+			scaleY = Math.max(0, (svg.initial.real.currHeight + svg.new.translateDiff[1]) / svg.initial.real.currHeight);
 			scale = `scale(${scaleX}, ${scaleY})`;
 
 			let newX, newY;

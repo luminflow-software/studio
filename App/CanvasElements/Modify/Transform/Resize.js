@@ -19,8 +19,12 @@ var resize = function (initial, type) { initial = svg.initial; type = svg.type;
 	var translateX = (selection.width - cache.origSelectArea.width) / initial.scale[0] / doc.zoom;
 	var translateY = (selection.height - cache.origSelectArea.height) / initial.scale[1] / doc.zoom;
 	// These ratios are for the use of when the shiftKey is pressed
-	var ratioX = Math.abs(initial.width / initial.height);
-	var ratioY = Math.abs(initial.height / initial.width);
+	var baseRatioX = Math.abs(initial.width / initial.height);
+	var baseRatioY = Math.abs(initial.height / initial.width);
+	let rawRatio = [baseRatioX, baseRatioY];
+
+	var ratioX = Math.abs(initial.actualSize[0] / initial.actualSize[1]);
+	var ratioY = Math.abs(initial.actualSize[1] / initial.actualSize[0]);
 	// Set the cache area for easily generating new element attribues
 	var leftX = initial.x; 
 	var rightX = initial.right;
@@ -63,19 +67,28 @@ var resize = function (initial, type) { initial = svg.initial; type = svg.type;
 	if (type === 'genericElement') {
 		
 		if (rightHandle) {
-			translateX = (drag.end[0] - drag.start[0])*doc.viewScale[0] * doc.scaleFit[0] * doc.ratio[0];
+			translateX = (drag.end[0] - drag.start[0]);
 		}
 		if (bottomHandle) {
-			translateY = (drag.end[1] - drag.start[1])*doc.viewScale[1] * doc.scaleFit[1] * doc.ratio[1];
+			translateY = (drag.end[1] - drag.start[1]);
 		}
-
 
 		if (leftHandle) {
-			translateX = (drag.start[0] - drag.end[0])*doc.viewScale[0] * doc.scaleFit[0] * doc.ratio[0];
+			translateX = (drag.start[0] - drag.end[0]);
 		}
 		if (topHandle) {
-			translateY = (drag.start[1] - drag.end[1])*doc.viewScale[1] * doc.scaleFit[1] * doc.ratio[1];
+			translateY = (drag.start[1] - drag.end[1]);
 		}
+
+		if (pressed.shiftKey) {
+			if (leftHandle || rightHandle)
+				translateY = translateX * ratioY;
+			if (topHandle || bottomHandle)
+				translateX = translateY * ratioX;
+		}
+
+		translateY *= doc.viewScale[0] * doc.scaleFit[0] * doc.ratio[0];
+		translateX *= doc.viewScale[1] * doc.scaleFit[1] * doc.ratio[1];
 
 		svg.new.translateDiff = [translateX * doc.zoom, translateY * doc.zoom];
 	} else {
@@ -95,7 +108,7 @@ var resize = function (initial, type) { initial = svg.initial; type = svg.type;
 		}
 
 		if (pressed.shiftKey) {
-			ratio = [ratioX, ratioY];
+			ratio = rawRatio;
 
 			if (type == 'line') { // for some shapes it does matter whether they are drawn left-top to right-bottom or left-bottom to right-top
 				var slope = svg.line.y1 / svg.line.y2;
