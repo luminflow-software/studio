@@ -53,10 +53,43 @@ var property = {
 							'height': scrubAmount
 						});
 						tool.strokeWidth = value;
-						break;
+					}
+					break;
+				case 'opacity':
+					valueChange = this.value + valueChange / 100; // Scale down the change for opacity (0-1 range)
+					var opacityValue = Math.max(0, Math.min(1, valueChange)); // Clamp between 0 and 1
+					
+					// Check if opacity button is toggled
+					var opacityToggled = $('[aria-label="opacity"]').hasClass('toggled');
+					
+					if (!opacityToggled) {
+						// Not toggled: set element opacity only
+						cache.ele.css('opacity', opacityValue);
+					} else {
+						// Toggled: set stroke-opacity and/or fill-opacity based on selection
+						var strokeToggled = $('[aria-label="stroke"]').hasClass('toggled');
+						var fillToggled = $('[aria-label="fill"]').hasClass('toggled');
+						
+						if (strokeToggled) {
+							cache.ele.attr('stroke-opacity', opacityValue);
+							tool.strokeOpacity = opacityValue;
+						}
+						if (fillToggled) {
+							cache.ele.attr('fill-opacity', opacityValue);
+							tool.fillOpacity = opacityValue;
+						}
 					}
 					
-
+					var displayValue = (opacityValue * 100).toFixed(0) + '%';
+					scrubAmount = opacityValue * 190; // Scale to scrubber height
+					
+					$('.propertyScrubber').attr({
+						'data-value': displayValue
+					}).removeClass('smallText');
+					$('.scrub').css({
+						'height': scrubAmount
+					});
+					break;
 			}
 		} else {
 			$('.propertyScrubber').attr({
