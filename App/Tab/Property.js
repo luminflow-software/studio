@@ -1,0 +1,102 @@
+/** This contains all functions pertaining to the Properties Tab */
+
+import { cache } from '../Cache.js';
+import { ui } from '../UI.js';
+
+import { tool } from './Tool.js';
+
+var property = {
+	dynamicUI: function () {
+
+	},
+	colorTo: 'stroke', // What the color applies to
+	showOptions: function () {
+
+	},
+	value: 0,
+	setNumValue: function () { // Change the value of a property
+		if (!cache.ele) return;
+		
+		var property = this.scrubberTo;
+		var valueChange;
+		var scrubAmount = 0;
+		if (!$('.propertyScrubber').hasClass('down')) {
+			valueChange = ui.location('stroke', 'top') - cache.cursor[1];
+		} else {
+			valueChange = cache.cursor[1] - ui.location('stroke', 'bottom');
+		}
+		if (cache.ele.attr('stroke-opacity') == '0') {
+			cache.ele.attr('stroke-opacity', 1);
+		}
+		if (cache.ele) {
+			switch (property.attr('aria-label')) {
+				case 'stroke':
+					valueChange = this.value + valueChange;
+					var value;
+
+					value = valueChange;
+					scrubAmount = value;
+					if (scrubAmount > 190)
+						scrubAmount = 190;
+						
+					if (CSS.supports('stroke-width', value)) {
+						cache.ele.attr('stroke-width', value);
+						if (value < 10) {
+							if (value != 0) {
+								value = value.toFixed(1);
+							}
+						}
+						$('.propertyScrubbwer').attr({
+							'data-value': value
+						}).removeClass('smallText');
+						$('.scrub').css({
+							'height': scrubAmount
+						});
+						tool.strokeWidth = value;
+					}
+					break;
+				case 'opacity':
+					valueChange = this.value + valueChange / 100; // Scale down the change for opacity (0-1 range)
+					var opacityValue = Math.max(0, Math.min(1, valueChange)); // Clamp between 0 and 1
+					
+					// Check if opacity button is toggled
+					var opacityToggled = $('[aria-label="opacity"]').hasClass('toggled');
+					
+					if (!opacityToggled) {
+						// Not toggled: set element opacity only
+						cache.ele.css('opacity', opacityValue);
+					} else {
+						// Toggled: set stroke-opacity and/or fill-opacity based on selection
+						var strokeToggled = $('[aria-label="stroke"]').hasClass('toggled');
+						var fillToggled = $('[aria-label="fill"]').hasClass('toggled');
+						
+						if (strokeToggled) {
+							cache.ele.attr('stroke-opacity', opacityValue);
+							tool.strokeOpacity = opacityValue;
+						}
+						if (fillToggled) {
+							cache.ele.attr('fill-opacity', opacityValue);
+							tool.fillOpacity = opacityValue;
+						}
+					}
+					
+					var displayValue = (opacityValue * 100).toFixed(0) + '%';
+					scrubAmount = opacityValue * 190; // Scale to scrubber height
+					
+					$('.propertyScrubber').attr({
+						'data-value': displayValue
+					}).removeClass('smallText');
+					$('.scrub').css({
+						'height': scrubAmount
+					});
+					break;
+			}
+		} else {
+			$('.propertyScrubber').attr({
+				'data-value': 'stroke width'
+			}).addClass('smallText');
+		}
+	}
+}
+
+export { property }
